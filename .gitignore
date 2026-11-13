@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 node_modules/
 PersonalNotes/
+.env.*
+!.env.example
