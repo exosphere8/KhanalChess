@@ -14,8 +14,14 @@ def test_illegal_move():
 
 
 def test_bad_move_format():
-    assert validate_move(START, "banana") == {"valid": False, "error": "invalid move format"}
+    assert validate_move(START, "banana") == {
+        "valid": False,
+        "error": "invalid move format",
+    }
 
 
 def test_bad_position():
-    assert validate_move("not a fen", "e2e4") == {"valid": False, "error": "invalid position"}
+    assert validate_move("not a fen", "e2e4") == {
+        "valid": False,
+        "error": "invalid position",
+    }
