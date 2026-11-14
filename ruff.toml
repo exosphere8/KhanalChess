@@ -1,0 +1,5 @@
+# Lint rules for ruff.
+# E, W: pycodestyle errors and warnings. F: pyflakes. I: import sorting.
+# B: likely bugs. UP: outdated syntax.
+[lint]
+select = ["E", "F", "W", "I", "B", "UP"]
