@@ -30,7 +30,7 @@ jobs:
       - name: Smoke test /health
         run: |
           for i in $(seq 1 30); do
-            if curl -fsS http://localhost:8000/health; then
+            if curl -fsS http://localhost:8000/healthx; then
               echo
               exit 0
             fi
