@@ -25,6 +25,23 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: docker build -t khanalchess:ci .
+      - name: Start container
+        run: docker run -d --name kc-smoke -p 8000:8000 khanalchess:ci
+      - name: Smoke test /health
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/health; then
+              echo
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "/health did not answer within 60 s"
+          docker logs kc-smoke
+          exit 1
+      - name: Stop container
+        if: always()
+        run: docker rm -f kc-smoke
 
   lint:
     runs-on: ubuntu-26.04
