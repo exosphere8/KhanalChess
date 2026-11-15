@@ -52,6 +52,21 @@ Google Cloud Run and Oracle Cloud Always Free
 - The free database expires. This is acceptable while the app only checks
   the connection and stores no data.
 - Two platforms mean two deployments to maintain for a while.
+- The image tested in CI and the image published are two builds of the same
+  source. Building once and pushing that image would close the gap.
+- :latest moves with every publish. Deploy from the :<sha> tag.
+
+## Progress (2026-11-15)
+
+- Done: CI publishes the image to GHCR after the three checks pass, only on a
+  push to main, with the tags :<sha> and :latest (PR #24). The package is
+  public. The pulled image answered /health with 200.
+- Done: the docker job starts the built image and calls /health with a retry
+  and a 60 s timeout (PR #25). Seen passing on main (CI #28) and failing on
+  purpose in a throwaway PR (#26, closed, not merged).
+- Not done: the Render service is not created (the card is expected to be
+  active on 2026-11-18), no deploy job, no smoke test against a live host.
+- Not started: AWS (plan type, MFA and budget alert still to be done).
 
 ## Out of scope
 
