@@ -20,7 +20,8 @@ body {
 
 .menu { width: min(100%, 28rem); padding: 2rem; text-align: center; }
 
-.logo { font-size: 5rem; line-height: 1; color: var(--accent); }
+.logo { display: block; height: 9rem; margin: 0 auto; color: var(--accent); }
+.logo-cut { fill: var(--bg); }
 
 h1 { margin: 0.5rem 0 0.25rem; font-size: 2.25rem; letter-spacing: 0.04em; }
 
