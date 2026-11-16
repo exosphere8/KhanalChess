@@ -54,7 +54,7 @@ jobs:
       - run: ruff check .
 
   publish:
-    needs: [test, docker, lint]
+    needs: [test, docker, lint, frontend]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-26.04
     permissions:
@@ -70,6 +70,12 @@ jobs:
         run: |
           IMAGE=ghcr.io/exosphere8/khanalchess
           docker build --label "org.opencontainers.image.source=https://github.com/exosphere8/KhanalChess" -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:latest" .
+          docker push "$IMAGE:$GITHUB_SHA"
+          docker push "$IMAGE:latest"
+      - name: Build and push frontend image
+        run: |
+          IMAGE=ghcr.io/exosphere8/khanalchess-frontend
+          docker build --label "org.opencontainers.image.source=https://github.com/exosphere8/KhanalChess" -t "$IMAGE:$GITHUB_SHA" -t "$IMAGE:latest" frontend
           docker push "$IMAGE:$GITHUB_SHA"
           docker push "$IMAGE:latest"
 

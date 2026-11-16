@@ -1,7 +1,9 @@
+import Logo from "./Logo.jsx";
+
 export default function App() {
   return (
     <main className="menu">
-      <div className="logo" aria-hidden="true">&#9821;</div>
+      <Logo />
       <h1>KhanalChess</h1>
       <p className="tagline">A minimalistic chess game.</p>
       <a className="btn btn-play" href="#">PLAY</a>
