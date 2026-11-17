@@ -32,7 +32,7 @@ def test_tables_exist():
             "WHERE table_schema = 'public'"
         ).fetchall()
     tables = {row[0] for row in rows}
-    assert {"users", "identities", "schema_migrations"} <= tables
+    assert {"users", "identities", "sessions", "schema_migrations"} <= tables
 
 
 def test_every_file_is_recorded():
