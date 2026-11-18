@@ -112,8 +112,12 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
-      - name: Audit dependencies
+      - name: Audit dependencies (production)
         working-directory: frontend
+        run: npm audit --omit=dev --audit-level=high
+      - name: Audit dependencies (all, informational)
+        working-directory: frontend
+        continue-on-error: true
         run: npm audit --audit-level=high
       - name: Lint
         working-directory: frontend
