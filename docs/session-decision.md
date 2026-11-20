@@ -1,7 +1,8 @@
 # Session decision record
 
-Status: proposed. Date: 2026-11-18. The cookie settings and the session
-lifetime are still open; see Not decided.
+Status: proposed. Date: 2026-11-18, updated 2026-11-20. The cookie settings
+and the session lifetime are chosen; only the cleanup of expired rows is
+still open; see Not decided.
 
 ## Context
 
@@ -19,6 +20,12 @@ sessions table (migration 003, #44) and the helpers in backend/sessions.py
    create takes the lifetime as an argument; it does not choose one.
 4. Logging out deletes the row.
 5. Deleting a user also deletes their sessions (ON DELETE CASCADE).
+6. The cookie is named kc_session and is set with HttpOnly, Secure,
+   SameSite=Lax, Path=/ and no Domain. HttpOnly and Secure are treated as
+   on; the owner did not confirm them. Lax sends the cookie when a person
+   arrives from a link on another site, so they do not look signed out.
+7. The session lifetime is fixed: 7 days from sign-in, with no renewal. The
+   cookie has Max-Age of 7 days, the same as the server end time.
 
 ## Reasons
 
@@ -31,17 +38,24 @@ sessions table (migration 003, #44) and the helpers in backend/sessions.py
 - Every request that needs a signed-in user reads the database.
 - Expired rows are ignored but never deleted, so they pile up until a
   cleanup job exists.
+- A fixed lifetime means even an active person signs in again after 7 days.
+- Max-Age saves the cookie on the computer's disk for up to 7 days. OWASP
+  advises leaving it out; we accept the cost for a login that lasts days.
 
 ## Not decided
 
-- The session lifetime: fixed or sliding, and how many days.
-- The cookie settings (HttpOnly, Secure, SameSite, name, path).
 - When expired rows are cleaned up.
+- Whether a sliding lifetime is wanted later.
 
 ## Not checked
 
-What each cookie setting does in browsers. To be read from a reliable
-source before the settings are chosen.
+- The 7 days is our own choice, not an OWASP number. The OWASP Session
+  Management Cheat Sheet itself was not read in full; timeouts were read
+  through MDN and OWASP's other pages.
+- Whether SameSite=Lax causes trouble on the return from Google sign-in.
+- Whether the __Host- name prefix works on http://localhost. It was left out
+  for now.
+- HttpOnly and Secure were not confirmed by the owner.
 
 ## Out of scope
 
