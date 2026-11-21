@@ -1,6 +1,7 @@
 # TypeScript decision record
 
-Status: proposed. Date: 2026-11-18. The switch is parked, not rejected.
+Status: decided. Date: 2026-11-18. Updated: 2026-11-22, after the owner's
+decision of 2026-11-19 to switch.
 
 ## Context
 
@@ -22,13 +23,13 @@ Switch to TypeScript
 - The shape of API data can be written down once and checked everywhere.
 - One migration PR, a little more to learn, and a type check in CI.
 
-## Decision (proposed)
+## Decision
 
-1. Park the switch for now. The backend sign-in endpoints come first,
-   because the frontend screens depend on them.
-2. Decide again before the frontend sign-up menu is built, while the
-   frontend is still small.
-3. If we switch, it is one PR on its own branch, with its own record update.
+1. Switch to TypeScript after the backend is finished. The backend comes
+   first, because the frontend screens depend on it.
+2. Change every frontend JavaScript file to TypeScript in one PR on its own
+   branch.
+3. That PR updates this record if anything changes.
 
 ## Reasons
 
@@ -37,8 +38,13 @@ Switch to TypeScript
 
 ## Trade-offs
 
-- Waiting means a larger migration if we do switch.
+- Waiting means a larger migration than switching today.
 - A type checker in CI is one more job to keep fast and green.
+
+## Not decided
+
+What counts as a finished backend: the sign-in endpoints and log out, or
+also the game engine.
 
 ## Not checked
 
