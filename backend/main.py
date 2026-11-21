@@ -1,9 +1,11 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from backend import sessions, users
 from backend.db import db_available
 from backend.game import validate_move
+from backend.session_cookie import COOKIE_NAME
 
 app = FastAPI(title="KhanalChess")
 
@@ -28,3 +30,13 @@ def health_db():
 @app.post("/move")
 def move(request: MoveRequest):
     return validate_move(request.fen, request.move)
+
+
+@app.get("/me")
+def me(request: Request):
+    token = request.cookies.get(COOKIE_NAME)
+    user_id = sessions.lookup(token) if token else None
+    user = users.get(user_id) if user_id is not None else None
+    if user is None:
+        raise HTTPException(status_code=401, detail="please sign in first")
+    return user
