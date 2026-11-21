@@ -13,14 +13,20 @@ head to a deployed product, one small reviewed change at a time.
   Pydantic model.
 - Health checks: GET /health, and GET /health/db, which answers 503 when
   PostgreSQL is unreachable.
-- Database: users and identities tables, created by a small migration runner
-  (numbered SQL files, each applied once).
+- Database: users, identities and sessions tables, created by a small
+  migration runner (numbered SQL files, each applied once).
+- Sessions: helpers to create, look up and delete a session (only a hash of
+  the cookie value is stored), and helpers to set and clear the cookie
+  (Secure, HttpOnly, SameSite=Lax, 7 days).
+- Who am I: GET /me answers with the id and display name of the signed-in
+  user, or 401. POST /logout ends the session and always answers 204.
 - Frontend: a React opening menu with an original SVG bishop. The buttons are
   placeholders for now.
 - Images: the API and the frontend are published to GitHub Container Registry
   after every merge to main.
 
-Not built yet: sign-in, the game screen, deployment.
+Not built yet: Google sign-in (nothing hands out the session cookie yet), the
+game screen, deployment.
 
 ## Stack
 
@@ -71,8 +77,13 @@ all five checks must pass.
   then move to AWS with Terraform.
 - docs/auth-decision.md: sign in with Google first. Separate users and
   identities tables mean a new provider adds rows, not columns.
+- docs/session-decision.md: sessions kept in the database, with a cookie
+  named kc_session (Secure, HttpOnly, SameSite=Lax, 7 days, no renewal).
+- docs/typescript-decision.md: finish the backend first, then switch the
+  frontend to TypeScript in one pull request.
 
-Both records are still marked proposed.
+The first three records are still marked proposed. The TypeScript record is
+decided.
 
 ## Run it locally
 
@@ -119,12 +130,13 @@ npm run build for the other checks.
 
 ## Roadmap
 
-1. Google sign-in and sessions in the backend.
-2. Frontend: PLAY opens a guest sign-up menu with a Google button, then a
+1. Google sign-in in the backend (sessions, /me and log out are done).
+2. Switch the frontend to TypeScript, in one pull request.
+3. Frontend: PLAY opens a guest sign-up menu with a Google button, then a
    signed-in menu.
-3. The frontend as a service in Docker Compose.
-4. Deployment: Render first, then AWS with Terraform.
-5. A leaderboard, once there are enough players.
+4. The frontend as a service in Docker Compose.
+5. Deployment: Render first, then AWS with Terraform.
+6. A leaderboard, once there are enough players.
 
 ## License
 
