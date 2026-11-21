@@ -1,11 +1,11 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from backend import sessions, users
 from backend.db import db_available
 from backend.game import validate_move
-from backend.session_cookie import COOKIE_NAME
+from backend.session_cookie import COOKIE_NAME, clear_session_cookie
 
 app = FastAPI(title="KhanalChess")
 
@@ -40,3 +40,13 @@ def me(request: Request):
     if user is None:
         raise HTTPException(status_code=401, detail="please sign in first")
     return user
+
+
+@app.post("/logout", status_code=204)
+def logout(request: Request):
+    token = request.cookies.get(COOKIE_NAME)
+    if token:
+        sessions.delete(token)
+    response = Response(status_code=204)
+    clear_session_cookie(response)
+    return response
