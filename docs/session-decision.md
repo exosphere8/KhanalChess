@@ -21,8 +21,8 @@ sessions table (migration 003, #44) and the helpers in backend/sessions.py
 4. Logging out deletes the row.
 5. Deleting a user also deletes their sessions (ON DELETE CASCADE).
 6. The cookie is named kc_session and is set with HttpOnly, Secure,
-   SameSite=Lax, Path=/ and no Domain. HttpOnly and Secure are treated as
-   on; the owner did not confirm them. Lax sends the cookie when a person
+   SameSite=Lax, Path=/ and no Domain. HttpOnly and Secure are on: the owner
+   confirmed them on Nov 21. Lax sends the cookie when a person
    arrives from a link on another site, so they do not look signed out.
 7. The session lifetime is fixed: 7 days from sign-in, with no renewal. The
    cookie has Max-Age of 7 days, the same as the server end time.
@@ -55,7 +55,7 @@ sessions table (migration 003, #44) and the helpers in backend/sessions.py
 - Whether SameSite=Lax causes trouble on the return from Google sign-in.
 - Whether the __Host- name prefix works on http://localhost. It was left out
   for now.
-- HttpOnly and Secure were not confirmed by the owner.
+- The Session B note on HttpOnly and Secure was not re-checked.
 
 ## Out of scope
 
