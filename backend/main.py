@@ -1,11 +1,21 @@
+import secrets
+
 from fastapi import FastAPI, HTTPException, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import BaseModel, Field
 
-from backend import sessions, users
+from backend import google_auth, sessions, users
 from backend.db import db_available
 from backend.game import validate_move
-from backend.session_cookie import COOKIE_NAME, clear_session_cookie
+from backend.session_cookie import (
+    COOKIE_NAME,
+    LIFETIME,
+    STATE_COOKIE_NAME,
+    clear_session_cookie,
+    clear_state_cookie,
+    set_session_cookie,
+    set_state_cookie,
+)
 
 app = FastAPI(title="KhanalChess")
 
@@ -49,4 +59,40 @@ def logout(request: Request):
         sessions.delete(token)
     response = Response(status_code=204)
     clear_session_cookie(response)
+    return response
+
+
+@app.get("/auth/google/login")
+def google_login():
+    state = secrets.token_urlsafe(32)
+    response = RedirectResponse(google_auth.login_url(state), status_code=302)
+    set_state_cookie(response, state)
+    return response
+
+
+@app.get("/auth/google/callback")
+def google_callback(
+    request: Request,
+    code: str | None = None,
+    state: str | None = None,
+):
+    expected = request.cookies.get(STATE_COOKIE_NAME)
+    if not code or not state or not expected:
+        raise HTTPException(status_code=400, detail="sign-in failed")
+    if not secrets.compare_digest(state.encode(), expected.encode()):
+        raise HTTPException(status_code=400, detail="sign-in failed")
+    try:
+        identity = google_auth.get_identity(code)
+    except google_auth.GoogleError:
+        raise HTTPException(status_code=502, detail="Google sign-in failed") from None
+    user_id = users.find_or_create(
+        "google",
+        identity["sub"],
+        identity["email"],
+        identity["display_name"],
+    )
+    token = sessions.create(user_id, LIFETIME)
+    response = RedirectResponse("/me", status_code=302)
+    set_session_cookie(response, token)
+    clear_state_cookie(response)
     return response
