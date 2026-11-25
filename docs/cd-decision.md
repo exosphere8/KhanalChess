@@ -49,8 +49,10 @@ Google Cloud Run and Oracle Cloud Always Free
 
 - The first request after idle is slow, so the smoke test needs a retry
   with a timeout.
-- The free database expires. This is acceptable while the app only checks
-  the connection and stores no data.
+- The free database expires. Since #60 it stores users, identities and
+  sessions, so each expiry deletes every account. This is acceptable only
+  while the Google app is in Testing and the project account is the only
+  user. Move the database before publishing the Google app.
 - Two platforms mean two deployments to maintain for a while.
 - The image tested in CI and the image published are two builds of the same
   source. Building once and pushing that image would close the gap.
