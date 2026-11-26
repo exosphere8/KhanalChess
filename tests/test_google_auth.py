@@ -104,7 +104,7 @@ def test_good_return_makes_a_ticket(monkeypatch):
         follow_redirects=False,
     )
     assert response.status_code == 302
-    assert response.headers["location"] == "/me"
+    assert response.headers["location"] == "http://localhost:5173/"
     set_cookie = response.headers["set-cookie"]
     assert "Max-Age=0" in set_cookie
     match = re.search(rf"{COOKIE_NAME}=([^;]+);", set_cookie)

@@ -1,3 +1,4 @@
+import os
 import secrets
 
 from fastapi import FastAPI, HTTPException, Request, Response
@@ -16,6 +17,8 @@ from backend.session_cookie import (
     set_session_cookie,
     set_state_cookie,
 )
+
+FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
 
 app = FastAPI(title="KhanalChess")
 
@@ -92,7 +95,7 @@ def google_callback(
         identity["display_name"],
     )
     token = sessions.create(user_id, LIFETIME)
-    response = RedirectResponse("/me", status_code=302)
+    response = RedirectResponse(f"{FRONTEND_URL}/", status_code=302)
     set_session_cookie(response, token)
     clear_state_cookie(response)
     return response
