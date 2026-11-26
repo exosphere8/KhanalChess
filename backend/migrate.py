@@ -1,23 +1,17 @@
 """Apply the numbered SQL files in backend/migrations, once each."""
 
-import os
 import sys
 from pathlib import Path
 
 import psycopg
 
+from backend.db import connect_args
+
 MIGRATIONS_DIR = Path(__file__).parent / "migrations"
 
 
 def connect() -> psycopg.Connection:
-    return psycopg.connect(
-        host=os.environ.get("POSTGRES_HOST", "db"),
-        dbname=os.environ["POSTGRES_DB"],
-        user=os.environ["POSTGRES_USER"],
-        password=os.environ["POSTGRES_PASSWORD"],
-        connect_timeout=3,
-        autocommit=True,
-    )
+    return psycopg.connect(**connect_args(), connect_timeout=3, autocommit=True)
 
 
 def run() -> list[str]:
