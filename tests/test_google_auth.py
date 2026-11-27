@@ -68,7 +68,7 @@ def test_login_sends_the_customer_to_google(monkeypatch):
     assert location.startswith(google_auth.AUTH_URL)
     query = parse_qs(urlparse(location).query)
     assert query["client_id"] == ["test-client-id"]
-    assert query["redirect_uri"] == [google_auth.REDIRECT_URI]
+    assert query["redirect_uri"] == [google_auth.redirect_uri()]
     state = query["state"][0]
     set_cookie = response.headers["set-cookie"]
     assert f"{STATE_COOKIE_NAME}={state}" in set_cookie
