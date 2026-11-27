@@ -7,9 +7,14 @@ from urllib.parse import urlencode
 
 import httpx2
 
-REDIRECT_URI = "http://localhost:8000/auth/google/callback"
+DEFAULT_REDIRECT_URI = "http://localhost:8000/auth/google/callback"
 AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth"
 TOKEN_URL = "https://oauth2.googleapis.com/token"
+
+
+def redirect_uri() -> str:
+    """Where Google sends the customer back: GOOGLE_REDIRECT_URI, else localhost."""
+    return os.environ.get("GOOGLE_REDIRECT_URI", DEFAULT_REDIRECT_URI)
 
 
 class GoogleError(Exception):
@@ -23,7 +28,7 @@ def login_url(state: str) -> str:
             "client_id": os.environ["GOOGLE_CLIENT_ID"],
             "response_type": "code",
             "scope": "openid email profile",
-            "redirect_uri": REDIRECT_URI,
+            "redirect_uri": redirect_uri(),
             "state": state,
         }
     )
@@ -42,7 +47,7 @@ def get_identity(code: str) -> dict:
             "code": code,
             "client_id": os.environ["GOOGLE_CLIENT_ID"],
             "client_secret": os.environ["GOOGLE_CLIENT_SECRET"],
-            "redirect_uri": REDIRECT_URI,
+            "redirect_uri": redirect_uri(),
             "grant_type": "authorization_code",
         },
         timeout=10,
